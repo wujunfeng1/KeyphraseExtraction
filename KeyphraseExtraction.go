@@ -108,16 +108,15 @@ func init() {
 	romanOneParts[8] = "i"
 }
 
-/*
-# =================================================================================================
-# function tokenizeIntoWords
-# brief description:
-#   Tokenize the input text into words and puntuations, then remove the puntuations.
-# input:
-#   text: The input text.
-# output:
-#   The tokens of the text grouped by phrases separated by puntuations.
-*/
+// =================================================================================================
+// function tokenizeIntoWords
+// brief description:
+//   Tokenize the input text into words and puntuations, then remove the puntuations.
+// input:
+//   text: The input text.
+// output:
+//   The tokens of the text grouped by phrases separated by puntuations.
+
 func tokenizeIntoWords(text string) [][]string {
 	// --------------------------------------------------------------------------------------------
 	// step 1: Tokenize the input text into words and puntuations.
@@ -158,17 +157,16 @@ func tokenizeIntoWords(text string) [][]string {
 	return result
 }
 
-/*
-# =================================================================================================
-# function convertRomanToArabic
-# brief description:
-#   Convert a roman number to an arabic number.
-# input:
-#   text: The input text.
-# output:
-#   If the input text is a roman number, return the arabic version of this number; otherwise return
-#   the original input text.
-*/
+// =================================================================================================
+// function convertRomanToArabic
+// brief description:
+//   Convert a roman number to an arabic number.
+// input:
+//   text: The input text.
+// output:
+//   If the input text is a roman number, return the arabic version of this number; otherwise return
+//   the original input text.
+
 func convertRomanToArabic(text string) string {
 	// --------------------------------------------------------------------------------------------
 	// step 1: Test the test against the regex of roman number
@@ -251,19 +249,18 @@ func convertRomanToArabic(text string) string {
 	}
 }
 
-/*
-# =================================================================================================
-# function convertNonAbbreviationToLowercase
-# brief description :
-#   Convert the input text to lowercase text if it is not an abbreviation.
-# input:
-#   text: The input text.
-# output:
-#   A string that is:
-#   (1) the original text if the original text has all its letters written in uppercase (with the
-#       allowed exception of the last letter being 's'),
-#   (2) the lowercase version of the original text in other cases.
-*/
+// =================================================================================================
+// function convertNonAbbreviationToLowercase
+// brief description :
+//   Convert the input text to lowercase text if it is not an abbreviation.
+// input:
+//   text: The input text.
+// output:
+//   A string that is:
+//   (1) the original text if the original text has all its letters written in uppercase (with the
+//       allowed exception of the last letter being 's'),
+//   (2) the lowercase version of the original text in other cases.
+
 func convertNonAbbreviationToLowercase(text string) string {
 	// --------------------------------------------------------------------------------------------
 	// Do not convert it if all its chars are capital (except that the last char is allowed to be a
@@ -283,16 +280,15 @@ func convertNonAbbreviationToLowercase(text string) string {
 	return strings.ToLower(text)
 }
 
-/*
-# =================================================================================================
-# function separateTextWithStopWords
-# brief description:
-#   Use stop words to seperate a sequence of words into candidate phrases.
-# input:
-#   phrases: a vector of word groups separated by puntuations.
-# output:
-#   a vector of candidate phrases
-*/
+// =================================================================================================
+// function separateTextWithStopWords
+// brief description:
+//   Use stop words to seperate a sequence of words into candidate phrases.
+// input:
+//   phrases: a vector of word groups separated by puntuations.
+// output:
+//   a vector of candidate phrases
+
 func separateTextWithStopWords(phrases [][]string) [][]string {
 	// --------------------------------------------------------------------------------------------
 	// step 1: Prepare the result
@@ -327,16 +323,15 @@ func separateTextWithStopWords(phrases [][]string) [][]string {
 	return result
 }
 
-/*
-# =================================================================================================
-# function separateHyphenedWords
-# brief description:
-#   Separate the hyphened words in candidate phrases into non-hyphened words for stemming later.
-# input:
-#   phrases: A vector of candidate phrases.
-# output:
-#   The unhyphenated candidate phrases.
-*/
+// =================================================================================================
+// function separateHyphenedWords
+// brief description:
+//   Separate the hyphened words in candidate phrases into non-hyphened words for stemming later.
+// input:
+//   phrases: A vector of candidate phrases.
+// output:
+//   The unhyphenated candidate phrases.
+
 func separateHyphenedWords(phrases [][]string) [][]string {
 	// --------------------------------------------------------------------------------------------
 	// step 1: Prepare the result
@@ -364,19 +359,18 @@ func separateHyphenedWords(phrases [][]string) [][]string {
 	return result
 }
 
-/*
-# =================================================================================================
-# function stemPhrases
-# brief description:
-#   Stem the words in each candidate phrases with Snowball stemmer (a.k.a. Porter 2 stemmer).
-# input:
-#   phrases: A vector of candidate phrases.
-# output:
-#   The stemmed candidate phrases.
-# notes:
-#   The reference to the stemmer used by us is:
-#   Porter, M. F. (2001). Snowball: A language for stemming algorithms.
-*/
+// =================================================================================================
+// function stemPhrases
+// brief description:
+//   Stem the words in each candidate phrases with Snowball stemmer (a.k.a. Porter 2 stemmer).
+// input:
+//   phrases: A vector of candidate phrases.
+// output:
+//   The stemmed candidate phrases.
+// notes:
+//   The reference to the stemmer used by us is:
+//   Porter, M. F. (2001). Snowball: A language for stemming algorithms.
+
 func stemPhrases(phrases [][]string) []string {
 	// --------------------------------------------------------------------------------------------
 	// step 1: Prepare the result
@@ -401,16 +395,15 @@ func stemPhrases(phrases [][]string) []string {
 	return result
 }
 
-/*
-# =================================================================================================
-# function ExtractKeyPhraseCandidates
-# brief description:
-#   Search from the input text for key phrase candidates.
-# input:
-#   text: The input text.
-# output:
-#   A vector of the stems of the key phrase candidates.
-*/
+// =================================================================================================
+// function ExtractKeyPhraseCandidates
+// brief description:
+//   Search from the input text for key phrase candidates.
+// input:
+//   text: The input text.
+// output:
+//   A vector of the stems of the key phrase candidates.
+
 func ExtractKeyPhraseCandidates(text string) []string {
 	// --------------------------------------------------------------------------------------------
 	// step 1: Tokenize the input text into words.
@@ -442,17 +435,38 @@ func ExtractKeyPhraseCandidates(text string) []string {
 	return result
 }
 
-/*
-# =================================================================================================
-# function TF
-# brief description:
-#	Compute Term Frequencies for a set of key phrase candidates with a set of auxiliary phrases
-# input:
-#	phraseCandidates: a set of key phrase candidates
-#	auxPhrases: an array of auxiliary phrases
-# output:
-#	The term frequency
-*/
+// =================================================================================================
+// func GetAllPossiblePhrases
+// brief description: convert a phrase candidate to a list of all possible phrases
+// input:
+//	phrase: the phrase candidate
+// output:
+//	a list of all possible phrases from this phrase candidate
+func GetAllPossiblePhrases(phrase string) []string {
+	words := strings.Split(phrase, " ")
+	n := len(words)
+	result := []string{}
+	for i := 0; i < n; i++ {
+		text := words[i]
+		result = append(result, text)
+		for j := i + 1; j < n; j++ {
+			text += " " + words[j]
+			result = append(result, text)
+		}
+	}
+	return result
+}
+
+// =================================================================================================
+// function TF
+// brief description:
+//	Compute Term Frequencies for a set of key phrase candidates with a set of auxiliary phrases
+// input:
+//	phraseCandidates: a set of key phrase candidates
+//	auxPhrases: an array of auxiliary phrases
+// output:
+//	The term frequency
+
 func TF(phraseCandidates []string, auxPhrases []string) map[string]uint {
 	// --------------------------------------------------------------------------------------------
 	// step 1: initialize the result
@@ -499,16 +513,15 @@ func TF(phraseCandidates []string, auxPhrases []string) map[string]uint {
 	return result
 }
 
-/*
-# =================================================================================================
-# function IDF
-# brief description:
-#	Compute Inverse Document Frequencies from some sets of key phrase candidates
-# input:
-#	phraseCandidateGroups: some groups of key phrase candidates
-# output:
-#	the inverse document frequencies
-*/
+// =================================================================================================
+// function IDF
+// brief description:
+//	Compute Inverse Document Frequencies from some sets of key phrase candidates
+// input:
+//	phraseCandidateGroups: some groups of key phrase candidates
+// output:
+//	the inverse document frequencies
+
 func IDF(phraseCandidateGroups [][]string) map[string]float64 {
 	// --------------------------------------------------------------------------------------------
 	// step 1: initialize the result
@@ -555,18 +568,17 @@ func IDF(phraseCandidateGroups [][]string) map[string]float64 {
 	return result
 }
 
-/*
-# =================================================================================================
-# function SimTF
-# brief description:
-#	Compute Fuzzy Term Frequencies for a set of key phrase candidates with a set of auxiliary phrases
-# input:
-#	phraseCandidates: a set of key phrase candidates
-#	auxPhrases: an array of auxiliary phrases
-#	phraseSimilarity: a sparse matrix that gives similarity between strings
-# output:
-#	The term frequency
-*/
+// =================================================================================================
+// function SimTF
+// brief description:
+//	Compute Fuzzy Term Frequencies for a set of key phrase candidates with a set of auxiliary phrases
+// input:
+//	phraseCandidates: a set of key phrase candidates
+//	auxPhrases: an array of auxiliary phrases
+//	phraseSimilarity: a sparse matrix that gives similarity between strings
+// output:
+//	The term frequency
+
 func SimTF(phraseCandidates []string, auxPhrases []string,
 	phraseSimilarity map[string]map[string]float64) map[string]float64 {
 	// --------------------------------------------------------------------------------------------
@@ -624,17 +636,16 @@ func SimTF(phraseCandidates []string, auxPhrases []string,
 	return result
 }
 
-/*
-# =================================================================================================
-# function SimIDF
-# brief description:
-#	Compute Fuzzy Inverse Document Frequencies from some sets of key phrase candidates
-# input:
-#	phraseCandidateGroups: some groups of key phrase candidates
-#	phraseSimilarity: a sparse matrix that gives similarity between strings
-# output:
-#	the inverse document frequencies
-*/
+// =================================================================================================
+// function SimIDF
+// brief description:
+//	Compute Fuzzy Inverse Document Frequencies from some sets of key phrase candidates
+// input:
+//	phraseCandidateGroups: some groups of key phrase candidates
+//	phraseSimilarity: a sparse matrix that gives similarity between strings
+// output:
+//	the inverse document frequencies
+
 func SimIDF(phraseCandidateGroups [][]string, phraseSimilarity map[string]map[string]float64) map[string]float64 {
 	// --------------------------------------------------------------------------------------------
 	// step 1: initialize the result
