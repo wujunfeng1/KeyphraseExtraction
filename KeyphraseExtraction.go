@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"regexp"
+	"runtime"
+	"sort"
 	"strings"
 
 	"github.com/jdkato/prose"
@@ -529,29 +531,63 @@ func IDF(phraseCandidateGroups [][]string) map[string]float64 {
 
 	// --------------------------------------------------------------------------------------------
 	// step 2: count the document frequency
-	for _, candidates := range phraseCandidateGroups {
-		// first find the set of texts in this document
-		groupResult := map[string]bool{}
-		for _, candidate := range candidates {
-			words := strings.Split(candidate, " ")
-			numWords := len(words)
-			for i := 0; i < numWords; i++ {
-				text := words[i]
-				groupResult[text] = true
-				for j := i + 1; j < numWords; j++ {
-					text += " " + words[j]
-					groupResult[text] = true
+	numCPUs := runtime.NumCPU()
+	numGroups := len(phraseCandidateGroups)
+	chI := make(chan int)
+	chResult := make(chan map[string]float64)
+	for idxCPU := 0; idxCPU < numCPUs; idxCPU++ {
+		go func() {
+			myResult := map[string]float64{}
+
+			for i0 := range chI {
+				i1 := i0 + 100
+				if i1 > numGroups {
+					i1 = numGroups
+				}
+				for i := i0; i < i1; i++ {
+					candidates := phraseCandidateGroups[i]
+
+					// first find the set of texts in this document
+					groupResult := map[string]bool{}
+					for _, candidate := range candidates {
+						words := strings.Split(candidate, " ")
+						numWords := len(words)
+						for i := 0; i < numWords; i++ {
+							text := words[i]
+							groupResult[text] = true
+							for j := i + 1; j < numWords; j++ {
+								text += " " + words[j]
+								groupResult[text] = true
+							}
+						}
+					}
+
+					// then update my document frequency with this set
+					for text, _ := range groupResult {
+						oldFreq, exists := myResult[text]
+						if !exists {
+							oldFreq = 0.0
+						}
+						myResult[text] = oldFreq + 1.0
+					}
 				}
 			}
-		}
 
-		// then update the document frequency with this set
-		for text, _ := range groupResult {
-			oldFreq, exists := result[text]
+			chResult <- myResult
+		}()
+	}
+	for i := 0; i < numGroups; i += 100 {
+		chI <- i
+	}
+	close(chI)
+	for idxCPU := 0; idxCPU < numCPUs; idxCPU++ {
+		localResult := <-chResult
+		for phrase, freq := range localResult {
+			oldFreq, exists := result[phrase]
 			if !exists {
 				oldFreq = 0.0
 			}
-			result[text] = oldFreq + 1.0
+			result[phrase] = oldFreq + freq
 		}
 	}
 
@@ -632,7 +668,14 @@ func SimTF(phraseCandidates []string, auxPhrases []string,
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// step : return the result
+	// step 3: rescale the result with numbers of words in phrase
+	for text, freq := range result {
+		words := strings.Split(text, " ")
+		result[text] = freq * float64(len(words))
+	}
+
+	// --------------------------------------------------------------------------------------------
+	// step 4: return the result
 	return result
 }
 
@@ -747,4 +790,45 @@ func SimIDF(phraseCandidateGroups [][]string, phraseSimilarity map[string]map[st
 	// --------------------------------------------------------------------------------------------
 	// step 4: return the result
 	return result
+}
+
+// ================================================================================================
+// func ArgSort
+func ArgSort(a map[string]float64) []string {
+	numTexts := len(a)
+	result := make([]string, numTexts)
+	idx := 0
+	for text, _ := range a {
+		result[idx] = text
+		idx++
+	}
+	sort.Slice(result, func(i, j int) bool {
+		return a[result[i]] > a[result[j]]
+	})
+	return result
+}
+
+// ================================================================================================
+// func Includes
+func Includes(text1, text2 string) bool {
+	words1 := strings.Split(text1, " ")
+	words2 := strings.Split(text2, " ")
+	n1 := len(words1)
+	n2 := len(words2)
+	if n1 < n2 {
+		return false
+	}
+	for i := 0; i+n2 <= n1; i++ {
+		matched := true
+		for j := 0; j < n2; j++ {
+			if words1[i+j] != words2[j] {
+				matched = false
+				break
+			}
+		}
+		if matched {
+			return true
+		}
+	}
+	return false
 }
