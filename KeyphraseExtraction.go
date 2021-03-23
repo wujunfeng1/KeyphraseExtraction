@@ -832,3 +832,50 @@ func Includes(text1, text2 string) bool {
 	}
 	return false
 }
+
+// ================================================================================================
+// func Overlaps
+func Overlaps(text1, text2 string) bool {
+	// --------------------------------------------------------------------------------------------
+	// step 1: split the texts
+	words1 := strings.Split(text1, " ")
+	words2 := strings.Split(text2, " ")
+
+	// --------------------------------------------------------------------------------------------
+	// step 2: check the sizes
+	n1 := len(words1)
+	n2 := len(words2)
+	if n2 > n1 {
+		n1, n2 = n2, n1
+		words1, words2 = words2, words1
+	}
+
+	// --------------------------------------------------------------------------------------------
+	// step 3: find the intersection
+	for k := 1; k <= n2; k++ {
+		// (3.1) check if overlaps with words2 before words1
+		matched := true
+		for j := 0; j < k; j++ {
+			if words1[j] != words2[n2-k+j] {
+				matched = false
+				break
+			}
+		}
+		if matched {
+			return true
+		}
+
+		// (3.2) check if overlaps with words1 before words2
+		matched = true
+		for j := 0; j < k; j++ {
+			if words1[n1-k+j] != words2[j] {
+				matched = false
+				break
+			}
+		}
+		if matched {
+			return true
+		}
+	}
+	return false
+}
