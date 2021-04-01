@@ -71,6 +71,22 @@ func init() {
 	stopWords["via"] = true
 	stopWords["with"] = true
 	stopWords["without"] = true
+	stopWords["is"] = true
+	stopWords["are"] = true
+	stopWords["be"] = true
+	stopWords["you"] = true
+	stopWords["we"] = true
+	stopWords["they"] = true
+	stopWords["it"] = true
+	stopWords["what"] = true
+	stopWords["when"] = true
+	stopWords["where"] = true
+	stopWords["how"] = true
+	stopWords["do"] = true
+	stopWords["use"] = true
+	stopWords["here"] = true
+	stopWords["there"] = true
+	stopWords["using"] = true
 
 	reNumber = regexp.MustCompile("^[0-9]+$")
 	reRomanNumber = regexp.MustCompile("^[iIvVxXlLcCdDmM]+$")
@@ -395,6 +411,32 @@ func stemPhrases(phrases [][]string) []string {
 	// --------------------------------------------------------------------------------------------
 	// step 3: Return the result
 	return result
+}
+
+// =================================================================================================
+// function StemPhrases
+// brief description:
+//   Stem the words in each candidate phrases with Snowball stemmer (a.k.a. Porter 2 stemmer).
+// input:
+//   phrases: A vector of candidate phrases.
+// output:
+//   The stemmed candidate phrases.
+// notes:
+//   The reference to the stemmer used by us is:
+//   Porter, M. F. (2001). Snowball: A language for stemming algorithms.
+
+func StemPhrases(phrases []string) []string {
+	// --------------------------------------------------------------------------------------------
+	// step 1: Split phrases into words
+	numPhrases := len(phrases)
+	phraseWords := make([][]string, numPhrases)
+	for i, phrase := range phrases {
+		phraseWords[i] = strings.Split(strings.ToLower(phrase), " ")
+	}
+
+	// --------------------------------------------------------------------------------------------
+	// step 2: call stemPhrases and return the result
+	return stemPhrases(phraseWords)
 }
 
 // =================================================================================================
